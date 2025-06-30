@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+
+
+
+@layer {
+    .input-item {
+        @apply  w-full text-xs outline-0 px-4 py-3 rounded-lg border border-gray-700 bg-gray-800 text-gray-200 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-200 disabled:bg-gray-700
+    }
+    .c-input-item {
+        @apply h-[52px]  w-full text-xs outline-0 px-4 py-3 rounded-lg border border-gray-700 bg-gray-800 text-gray-200 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all duration-200 disabled:bg-gray-700
+    }
+    .input-item-w-icon {
+        @apply  h-[44px] text-xs rounded-lg text-zinc-700 outline-0 border border-gray-400 focus:border-indigo-500 w-full transition-all pl-9
+    }
+    .select-item {
+        @apply  h-[44px] text-xs rounded-lg text-zinc-700 outline-0 border border-gray-400 focus:border-indigo-500 w-full transition-all pl-1
+    }
+    .input-icon {
+        @apply text-sm absolute left-3 top-[15px] text-zinc-700
+    }
+    .xs-txt{
+        @apply text-xs text-white
+    }
+    .sm-txt{
+        @apply text-sm text-white
+    }
+    .lg-txt{
+        @apply text-lg text-white
+    }
+
+
+    .list table {
+        @apply min-w-full divide-y divide-gray-200
+    }
+    .list table thead {
+        @apply bg-gray-50
+    }
+    .list table thead th {
+        @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider
+    }
+    .list table tbody {
+        @apply bg-white divide-y divide-gray-200
+    }
+    .list table tbody tr {
+        @apply hover:bg-gray-50
+    }
+    .list table tbody tr td {
+       @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider 
+    }
+}
