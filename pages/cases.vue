@@ -9,7 +9,7 @@
       </h1>
       <div v-if="cases.length === 0" class="text-center text-gray-300 py-20 text-lg">Hiç dava bulunamadı.</div>
       <div v-else class="overflow-x-auto rounded-2xl shadow-xl bg-gray-900">
-        <table class="min-w-full divide-y divide-gray-800">
+        <table class="min-w-full w-full divide-y divide-gray-800">
           <thead class="bg-gray-900">
             <tr>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-gray-200">Mahkeme</th>
@@ -37,7 +37,7 @@
               </td>
               <td class="px-4 py-3 text-gray-300">{{ (caseItem.date || '').split('T')[0] }}</td>
               <td class="px-4 py-3">
-                <div class="flex items-center gap-2 cursor-pointer">
+                <div @click="goToCase(caseItem.caseNo)" class="flex items-center gap-2 cursor-pointer">
                   <Eye :size="24" class="w-4 h-4 text-blue-400" />
                 </div>
               </td>
@@ -59,8 +59,11 @@ definePageMeta({
 import { ref, onMounted } from 'vue'
 import { apiRequest } from '@/utils/axiosService'
 import { useAuthStore } from '@/stores/auth'
+import { useRoute } from 'vue-router'
 
 const authStore = useAuthStore()
+const router = useRouter()
+const route = useRoute()
 
 interface CaseItem {
   id: number
@@ -88,6 +91,12 @@ const getCases = async () => {
   if(response.data.success){
     cases.value = response.data.data
   }
+}
+
+
+
+const goToCase = (caseNo: string) => {
+  router.push(`/${encodeURIComponent(caseNo)}`)
 }
 
 onMounted(() => {
