@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import type { SessionResponesModel } from '~/types/models/authModels'
+import { useRouter } from '#app'
 
 export const useAuthStore = defineStore('auth', {
   
@@ -33,6 +34,7 @@ export const useAuthStore = defineStore('auth', {
                   this.expTime = time2;
                   this.expirationDate = new Date().getTime() + time2;
                   await this.getSession();
+                  await this.setRefreshTokenTime();
                   return res;
               }
           } catch (err: any) {
@@ -101,11 +103,13 @@ export const useAuthStore = defineStore('auth', {
         }
     },
     async logout() {
+      const router = useRouter();
       if (this.isLoggingOut) return;
       this.isLoggingOut = true;
       try {
         if(this.session) {
           await apiRequest('get','/auth/logout')
+          router.push('/')
         }
       } catch (err : any) {
         console.log(err);

@@ -24,7 +24,7 @@
               <tr
                 v-for="(caseItem, index) in cases"
                 :key="caseItem.id"
-                class="hover:bg-gray-800 transition"
+                class="hover:bg-gray-900 transition"
                 :class="(index % 2 === 0) ? 'bg-gray-800' : ''"
               >
               <td class="px-4 py-3 text-gray-100">{{ caseItem.court }}</td>
@@ -38,7 +38,7 @@
                 <td class="px-4 py-3 text-gray-300">{{ (caseItem.date || '').split('T')[0] }}</td>
                 <td class="px-4 py-3">
                   <button v-if="caseItem.judgmentTypeId != '0'" @click="goToCase(caseItem.caseNo)" class="flex items-center gap-2 cursor-pointer">
-                    <Eye :size="24" class="w-4 h-4 text-blue-400" />
+                    <Eye :size="22" class=" text-blue-400" />
                   </button>
                 </td>
                 
@@ -52,13 +52,18 @@
   
   <script setup lang="ts">
   import { Eye } from 'lucide-vue-next';
+  import { useRouter } from 'vue-router';
+  import { apiRequest } from '../../utils/axiosService'
+   import { useAuthStore } from '../../stores/auth'
+
+
   definePageMeta({
     layout: 'auth'
   })
   
   import { ref, onMounted } from 'vue'
-  import { apiRequest } from '@/utils/axiosService'
-  import { useAuthStore } from '@/stores/auth'
+
+ 
   
   const authStore = useAuthStore()
   const router = useRouter()
@@ -95,9 +100,8 @@
   
   const goToCase = (caseNo: string) => {
   
-    let nCaseNo = caseNo.replace('/', '-')
   
-    router.push(`/cases/${encodeURIComponent(nCaseNo)}`)
+    router.push(`/cases/${encodeURIComponent(caseNo)}/case-info`)
   }
   
   onMounted(() => {
