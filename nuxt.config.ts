@@ -10,6 +10,9 @@ export default defineNuxtConfig({
     'nuxt-lucide-icons',
     'pinia-plugin-persistedstate/nuxt'
   ],
+  pinia: {
+    storesDirs: ['./stores/**'],
+  },
   css: [
     '@/assets/css/main.css',
     '@/assets/css/transitions.css'

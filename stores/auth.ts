@@ -4,7 +4,15 @@ export const useAuthStore = defineStore('auth', {
   
   state: () => ({
     isLoggedIn: false,
-    authInfo : null,
+    authInfo: {
+      id: null,
+      username: null,
+      email: null,
+      isVerified: false,
+      accessToken: null,
+      expiresIn : null,
+    },
+    session: null,
     // İstersen token, user vs. ekleyebilirsin
   }),
   actions: {
@@ -14,7 +22,16 @@ export const useAuthStore = defineStore('auth', {
     },
     logout() {
       this.isLoggedIn = false
+      this.authInfo = {
+        id: null,
+        username: null,
+        email: null,
+        isVerified: false,
+        accessToken: null,
+        expiresIn : null,
+      }
+      this.session = null
     }
   },
-  persist : true
-}) 
+  persist: true
+},) 

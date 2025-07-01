@@ -159,18 +159,6 @@
 </template>
 
 <script setup>
-import { useAuthStore } from '@/stores/auth'
-
-
- const authStore = useAuthStore()
-
-
-const handle = () => {
-    console.log("authstore",authStore.authInfo)
-}   
-
-handle();
-
 
 </script>
 

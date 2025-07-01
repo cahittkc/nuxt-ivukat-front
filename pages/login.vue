@@ -57,7 +57,7 @@
           </div>
   
           <!-- Hata Mesajı -->
-          <div v-if="loginErr" class="mb-6 p-4 rounded-lg bg-red-900/50 border border-red-800">
+          <div v-if="loginErr != ''" class="mb-6 p-4 rounded-lg bg-red-900/50 border border-red-800">
             <div class="flex">
               <div class="flex-shrink-0">
                 <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -70,7 +70,7 @@
               <div class="ml-auto pl-3">
                 <div class="-mx-1.5 -my-1.5">
                   <button
-                    @click="loginErr = null"
+                    @click="loginErr = ''"
                     class="inline-flex rounded-md p-1.5 text-red-400 hover:bg-red-800/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                   >
                     <span class="sr-only">Kapat</span>
@@ -176,10 +176,11 @@ import { apiRequest } from '@/utils/axiosService'
 const username = ref('')
 const password = ref('')
 
-const isLoading = ref(false)
-const loginErr = ref('')
+const isLoading = ref<boolean>(false)
+const loginErr = ref<string>('')
 const router = useRouter()
 const auth = useAuthStore()
+
 
 const handleLogin = async () => {
     console.log(username.value);
@@ -190,7 +191,7 @@ const handleLogin = async () => {
         // Başarılı login ise store güncelle ve yönlendir
         if(res.data.success){
             auth.login(res.data.data)
-            router.push("/dashboard")
+            router.push("/cases")
         }
         console.log(res.data);
     } catch (err: any) {
