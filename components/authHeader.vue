@@ -2,7 +2,7 @@
   <header class="backdrop-blur bg-gradient-to-r from-gray-900/80 via-gray-800/80 to-gray-900/80 border-b border-gray-700 shadow-lg sticky top-0 z-30">
     <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
       <!-- Logo / Başlık -->
-      <div class="flex items-center gap-2">
+      <div @click="router.push('/cases')" class="flex items-center gap-2">
         <LucideShield class="w-7 h-7 text-indigo-400" />
         <span class="text-xl font-bold text-gray-100 tracking-wide">IVUKAT</span>
       </div>

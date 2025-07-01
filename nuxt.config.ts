@@ -15,7 +15,7 @@ export default defineNuxtConfig({
   },
   css: [
     '@/assets/css/main.css',
-    '@/assets/css/transitions.css'
+    '@/assets/css/transitions.css',
   ],
   app: {
     head: {
