@@ -8,7 +8,7 @@
           Dava Detayı
         </h1>
         <div v-if="loading" class="text-gray-300">Yükleniyor...</div>
-        <div v-else-if="!caseDetail" class="text-red-400">Dava bulunamadı.</div>
+        <div v-else-if="!caseDetail" class="text-red-400">Dava detayı bulunamadı.</div>
         <div v-else>
           <table class="min-w-full w-full divide-y divide-gray-800 bg-gray-900 rounded-xl overflow-hidden">
             <tbody>

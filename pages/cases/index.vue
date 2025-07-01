@@ -37,7 +37,7 @@
                 </td>
                 <td class="px-4 py-3 text-gray-300">{{ (caseItem.date || '').split('T')[0] }}</td>
                 <td class="px-4 py-3">
-                  <button v-if="caseItem.judgmentTypeId != '0'" @click="goToCase(caseItem.caseNo)" class="flex items-center gap-2 cursor-pointer">
+                  <button  @click="goToCase(caseItem.caseNo)" class="flex items-center gap-2 cursor-pointer">
                     <Eye :size="22" class=" text-blue-400" />
                   </button>
                 </td>
