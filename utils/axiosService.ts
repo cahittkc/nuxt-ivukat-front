@@ -1,14 +1,20 @@
 import axios from 'axios'
 import type { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { useRuntimeConfig } from '#app'
+import { useAuthStore } from '#imports'
+import { useRouter } from 'vue-router'
+
+
 
 /**
  * Her çağrıda güncel baseURL ile axios instance döner
  */
 function getApiInstance() {
+  const auth = useAuthStore()
+  const router = useRouter()
   const config = useRuntimeConfig()
   const api = axios.create({
-    baseURL: config.public.apiBase || "http://localhost:3000/api",
+    baseURL: config.public.apiBase || "http://localhost:3000/api",
     // İstersen timeout, headers vs. ekleyebilirsin
   })
 
@@ -19,7 +25,41 @@ function getApiInstance() {
       // Burada genel hata yönetimi yapabilirsin
       return Promise.reject(error)
     }
-  )
+  );
+
+  api.interceptors.request.use(
+    (config) => {
+        // Token varsa header'a ekle
+        const token = auth.authInfo.accessToken;
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+api.interceptors.response.use(
+  (response: AxiosResponse) => response,
+  (error: any) => {
+    const reqUrl = error?.response?.config?.url || '';
+    // Eğer istek /auth/logout endpointine ise logout yapma
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      !reqUrl.endsWith('/auth/logout')
+    ) {
+      if(auth.session){
+        auth.logout();
+        router.push('/');
+      }
+      
+    }
+    return Promise.reject(error);
+  }
+);
 
   return api
 }

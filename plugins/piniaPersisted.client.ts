@@ -1,5 +1,7 @@
-import { createPinia } from 'pinia'
+import { defineNuxtPlugin } from '#app'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
-const pinia = createPinia()
-pinia.use(piniaPluginPersistedstate)
+export default defineNuxtPlugin((nuxtApp) => {
+  // Explicitly cast nuxtApp.$pinia to Pinia to avoid type error
+  (nuxtApp.$pinia as import('pinia').Pinia).use(piniaPluginPersistedstate)
+})

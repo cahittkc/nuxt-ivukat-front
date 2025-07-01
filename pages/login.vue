@@ -183,21 +183,9 @@ const auth = useAuthStore()
 
 
 const handleLogin = async () => {
-    console.log(username.value);
-    
-    loginErr.value = ''
-    try {
-        const res = await apiRequest('post', '/auth/login', { username: username.value, password: password.value })
-        // Başarılı login ise store güncelle ve yönlendir
-        if(res.data.success){
-            auth.login(res.data.data)
-            router.push("/cases")
-        }
-        console.log(res.data);
-    } catch (err: any) {
-        console.log(err);
-        
-        loginErr.value = err?.response?.data?.message || 'Giriş başarısız.'
+    const response = await auth.login({username : username.value, password : password.value});
+    if(response?.data.success){
+      router.push('/cases')
     }
 }
 </script>
