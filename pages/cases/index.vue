@@ -13,7 +13,7 @@
             <thead class="bg-gray-900">
               <tr>
                   <th class="px-4 py-3 text-left text-xs font-semibold text-gray-200">Mahkeme</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-200">Dava No</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-200">Dosya No</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-gray-200">Açıklama</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-gray-200">Durum</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-gray-200">İlgili Davalar</th>
@@ -45,15 +45,27 @@
                 </td>
                 <td class="px-4 py-3 text-gray-300">{{ (caseItem.date || '').split('T')[0] }}</td>
                 <td class="px-4 py-3">
-                  <button  @click="goToCase(caseItem.caseNo)" class="flex items-center gap-2 cursor-pointer">
+                  <NuxtLink :to="`/cases/${encodeURIComponent(caseItem.caseNo)}/case-info`">
                     <Eye :size="22" class=" text-blue-400" />
-                  </button>
+                  </NuxtLink>
                 </td>
                 
               </tr>
             </tbody>
           </table>
         </div>
+        <vue-awesome-paginate
+            :total-items="pagination.total"
+            :items-per-page="listObj.pageSize"
+            v-model="listObj.page"
+            @click="onClickHandler"
+            :max-pages-shown="3"
+            prevButtonContent="Prev"
+            nextButtonContent="Next"
+            :show-breakpoint-buttons="true"
+            :show-ending-buttons="true"
+            :hidePrevNextWhenEnds="true"
+        />
       </div>
     </div>
   </template>
@@ -92,23 +104,38 @@
     judgmentUnitUyapId: string
     caseClients: string[]
   }
+
+  const listObj = ref({
+    userId : authStore.authInfo.id,
+    page : 1,
+    pageSize : 18,
+  })  
   
   const cases = ref<CaseItem[]>([])
   
   const getCases = async () => {
-    const response = await apiRequest('post', '/cases/get-cases-by-user-id', {
-      userId: authStore.authInfo.id 
-    })
+    const response = await apiRequest('post', '/cases/get-cases-by-user-id', listObj.value)
     if(response.data.success){
-      cases.value = response.data.data
+      cases.value = response.data.data.data
+      pagination.value.page = response.data.data.page
+      pagination.value.total = response.data.data.total
     }
+  }
+  
+  const pagination = ref({
+    page : 1,
+    total : 0
+  })
+
+  const onClickHandler = async (page :number) => {
+      listObj.value.page = page
+      getCases();
+      
   }
   
   
   
   const goToCase = (caseNo: string) => {
-  
-  
     router.push(`/cases/${encodeURIComponent(caseNo)}/case-info`)
   }
   

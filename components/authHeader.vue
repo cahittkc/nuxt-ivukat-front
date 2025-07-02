@@ -9,14 +9,22 @@
       <!-- Orta: Sayfa başlığı veya arama -->
       <div class="hidden md:flex items-center">
         <div class="relative">
-          <input
-            type="text"
-            placeholder="Dosya veya kullanıcı ara…"
-            class="pl-10 pr-4 py-2 rounded-full bg-gray-800/80 text-gray-200 placeholder-gray-400 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 w-72 focus:w-96 shadow"
-          />
-          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-indigo-400">
-            <LucideSearch class="w-5 h-5" />
-          </span>
+          <div class="relative">
+            <input
+              type="text"
+              placeholder="Dosya arama…"
+              class="pl-10 pr-10 py-2 rounded-full bg-gray-800/80 text-gray-200 placeholder-gray-400 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 w-96  shadow"
+              @input="searchHandler"
+              v-model="search"
+              ref="searchInput"
+            />
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-indigo-400">
+              <LucideSearch class="w-5 h-5" />
+            </span>
+            <div @click="clearText($event)" v-if="search" class="absolute right-3 top-1/2 -translate-y-1/2 z-10">
+              <LucideX :size="14" class="text-indigo-400 cursor-pointer" />
+            </div>
+          </div>
         </div>
       </div>
       <!-- Sağ: Kullanıcı menüsü -->
@@ -38,14 +46,69 @@
       </div>
     </div>
   </header>
+  <searchModal :visible="searchModalVisible" :cases="cases" @close="searchModalVisible = false" @select="goToCase" />
 </template>
 
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
-import { useRouter } from 'vue-router'
-import { LucideShield, LucideUser, LucideBell, LucideSearch } from 'lucide-vue-next'
+import { useRouter, useRoute } from 'vue-router'
+import { LucideShield, LucideUser, LucideBell, LucideSearch, LucideX } from 'lucide-vue-next'
+import searchModal from './searchModal.vue'
 
 const auth = useAuthStore()
 const router = useRouter()
+const route = useRoute()
+
+const search = ref<string>('')
+const searchModalVisible = ref(false)
+const cases = ref<any[]>([])
+let searchTimeout: NodeJS.Timeout | null = null
+
+const searchInput = ref<HTMLInputElement>()
+
+const clearText = (e: Event) => {
+    e.preventDefault()
+    search.value = ''
+}
+
+watch(route, () => {
+    search.value = ''
+    cases.value = []
+    searchModalVisible.value = false
+})
+
+
+const goToCase = (caseNo: string) => {
+  router.push(`/cases/${encodeURIComponent(caseNo)}/case-info`)
+}
+
+const searchHandler = () => {
+  if (searchTimeout) {
+    clearTimeout(searchTimeout)
+  }
+
+  // Eğer arama değeri 4 karakterden azsa veya boşsa, timeout'u temizle ve döndür
+  if (search.value.length < 4 || !search.value.trim()) {
+    if (searchTimeout) {
+      clearTimeout(searchTimeout)
+      searchTimeout = null
+    }
+    return
+  }
+
+  searchTimeout = setTimeout(async () => {
+    try {
+      let replaceText = search.value.replace(/\s/g, "")
+      const result = await apiRequest('post', '/cases/search-case', { searchText: replaceText.toLowerCase() })
+      cases.value = result.data.data
+      searchModalVisible.value = true
+    } catch (error) {
+      console.log(error)
+    }
+  }, 300)
+}
+
+
+
 
 </script>
