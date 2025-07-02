@@ -2,7 +2,7 @@
   <div class="bg-gradient-to-b from-gray-900 to-black">
    
     <authHeader/>
-    <main class="min-h-screen bg-gradient-to-b from-gray-900 to-black">
+    <main class="bg-gradient-to-b from-gray-900 to-black">
       <div class="container mx-auto max-w-7xl">
         <slot />
       </div>

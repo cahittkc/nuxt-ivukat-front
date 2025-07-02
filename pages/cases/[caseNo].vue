@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen p-4">
+  <div class="minh p-4">
     <div class="flex gap-4 border-b border-gray-700 mb-6">
       <NuxtLink
         :to="`/cases/${encodeURIComponent(caseNo as string)}/case-info`"

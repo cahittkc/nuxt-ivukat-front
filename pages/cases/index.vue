@@ -1,5 +1,5 @@
 <template>
-    <div class="min-h-screen bg-gradient-to-b from-gray-900 to-black py-10 px-4">
+    <div class="minh bg-gradient-to-b from-gray-900 to-black py-10 px-4">
       <div class="mx-auto">
         <h1 class="text-3xl font-extrabold text-white mb-10 tracking-tight flex items-center gap-2">
           <span class="inline-block bg-blue-700 rounded-full p-2">
@@ -16,6 +16,7 @@
                 <th class="px-4 py-3 text-left text-xs font-semibold text-gray-200">Dava No</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-gray-200">Açıklama</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-gray-200">Durum</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-200">İlgili Davalar</th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-gray-200">Tarih</th>
                 <th></th>
               </tr>
@@ -34,6 +35,13 @@
                   <span :class="caseItem.caseStatusCode === 0 ? 'bg-yellow-200 text-yellow-900' : 'bg-green-200 text-green-900'" class="px-2 py-1 rounded text-xs font-semibold">
                     {{ caseItem.caseStatusCode === 0 ? 'Açık' : 'Kapalı' }}
                   </span>
+                </td>
+                <td class="px-4 py-3 text-gray-300">
+                  <div class="flex items-center gap-x-0.5">
+                      <NuxtLink v-for="o in caseItem.oldEsasNo" :key="o" :to="`/cases/${encodeURIComponent(o as string)}/case-info`">
+                        <span class="text-blue-400" >{{ o }}</span>
+                      </NuxtLink>
+                  </div>
                 </td>
                 <td class="px-4 py-3 text-gray-300">{{ (caseItem.date || '').split('T')[0] }}</td>
                 <td class="px-4 py-3">

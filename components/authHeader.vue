@@ -1,8 +1,8 @@
 <template>
-  <header class="backdrop-blur bg-gradient-to-r from-gray-900/80 via-gray-800/80 to-gray-900/80 border-b border-gray-700 shadow-lg sticky top-0 z-30">
+  <header class="backdrop-blur bg-gradient-to-r from-gray-900/80 via-gray-800/80 to-gray-900/80 border-b border-gray-800 shadow-lg sticky top-0 z-30">
     <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
       <!-- Logo / Başlık -->
-      <div @click="router.push('/cases')" class="flex items-center gap-2">
+      <div @click="router.push('/dashboard')" class="flex items-center gap-2 cursor-pointer">
         <LucideShield class="w-7 h-7 text-indigo-400" />
         <span class="text-xl font-bold text-gray-100 tracking-wide">IVUKAT</span>
       </div>
@@ -12,7 +12,7 @@
           <input
             type="text"
             placeholder="Dosya veya kullanıcı ara…"
-            class="pl-10 pr-4 py-2 rounded-full bg-gray-800/80 text-gray-200 placeholder-gray-400 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition w-72 shadow"
+            class="pl-10 pr-4 py-2 rounded-full bg-gray-800/80 text-gray-200 placeholder-gray-400 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 w-72 focus:w-96 shadow"
           />
           <span class="absolute left-3 top-1/2 -translate-y-1/2 text-indigo-400">
             <LucideSearch class="w-5 h-5" />

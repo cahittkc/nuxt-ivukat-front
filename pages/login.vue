@@ -185,7 +185,7 @@ const auth = useAuthStore()
 const handleLogin = async () => {
     const response = await auth.login({username : username.value, password : password.value});
     if(response?.data.success){
-      router.push('/cases')
+      router.push('/dashboard')
     }
 }
 </script>

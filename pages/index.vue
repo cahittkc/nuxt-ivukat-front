@@ -1,5 +1,5 @@
 <template>
-    <div class="min-h-screen bg-gradient-to-b from-gray-800 to-black">
+    <div class="minh bg-gradient-to-b from-gray-800 to-black">
         <!-- Header -->
         <header  class="fixed w-full bg-gray-900/80 backdrop-blur-md shadow-sm z-50 border-b border-gray-800">
             <div class="container mx-auto px-4">
