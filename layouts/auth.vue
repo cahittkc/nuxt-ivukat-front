@@ -7,6 +7,7 @@
         <slot />
       </div>
     </main>
+    <appFooter/>
   </div>
 </template> 
 
@@ -14,5 +15,5 @@
 
 <script setup lang="ts">
 import authHeader from '~/components/authHeader.vue';
-
+import appFooter from '~/components/footer.vue';
 </script>
