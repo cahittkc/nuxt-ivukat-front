@@ -52,7 +52,6 @@ const getParties = async () => {
         const response = await apiRequest('get', `parties/get-case-parties/${caseNo.replace('/', '-')}`)
         if(response.data.success){
             parties.value = response.data.data
-            console.log(response.data);
         }
     } catch (error) {
         console.log(error);

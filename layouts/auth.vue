@@ -3,7 +3,7 @@
    
     <authHeader/>
     <main class="bg-gradient-to-b from-gray-900 to-black">
-      <div class="container mx-auto max-w-7xl">
+      <div class="container mx-auto">
         <slot />
       </div>
     </main>

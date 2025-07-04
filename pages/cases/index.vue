@@ -7,8 +7,29 @@
           </span>
           Dava Listesi
         </h1>
-        <div v-if="cases.length === 0" class="text-center text-gray-300 py-20 text-lg">Hiç dava bulunamadı.</div>
-        <div v-else class="overflow-x-auto rounded-2xl shadow-xl bg-gray-900">
+        <div class="flex items-center gap-x-5 p-3 rounded-2xl shadow-xl bg-gray-900 mb-4">
+          <div class="flex flex-col gap-y-1">
+            <span class="text-gray-300 text-sm">Yargı Türü</span>
+            <select v-model="selectedJudgmentType" @change="getJudgmentUnitsByTypeId()" class="input-item">
+              <option v-for="c in judgmentTypes" :key="c.id" :value="c.uyapId">{{ c.name }}</option>
+            </select>
+          </div>
+
+          <div class="flex flex-col gap-y-1">
+            <span class="text-gray-300 text-sm">Yargı Birimi</span>
+            <select v-model="selectedJudgmentUnit" @change="getCases()" class="input-item min-w-[231px]">
+              <option :value="''">Seçiniz</option>
+              <option v-for="c in judgmentUnits" :key="c.id" :value="c.uyapId">{{ c.name }}</option>
+            </select>
+          </div>
+
+
+          <div>
+            <button @click="getCases()" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-8 mt-5 rounded-2xl">Filtrele</button>
+          </div>
+          
+        </div> 
+        <div v-if="cases.length > 0" class="overflow-x-auto rounded-2xl shadow-xl bg-gray-900">
           <table class="min-w-full w-full divide-y divide-gray-800">
             <thead class="bg-gray-900">
               <tr>
@@ -49,12 +70,18 @@
                     <Eye :size="22" class=" text-blue-400" />
                   </NuxtLink>
                 </td>
-                
               </tr>
             </tbody>
           </table>
         </div>
+
+        <div v-if="cases.length === 0" class="text-center text-gray-300 py-20 text-lg flex flex-col space-y-10 flex-1 items-center justify-center min-h-[40vh]">
+          <NotebookPen :size="72" class=" text-gray-400 opacity-50" />
+          <span class="text-gray-400 opacity-50">Hiç dava bulunamadı.</span>
+        </div>
+
         <vue-awesome-paginate
+            v-if="cases.length > 0"
             :total-items="pagination.total"
             :items-per-page="listObj.pageSize"
             v-model="listObj.page"
@@ -75,6 +102,7 @@
   import { useRouter } from 'vue-router';
   import { apiRequest } from '../../utils/axiosService'
    import { useAuthStore } from '../../stores/auth'
+   import { NotebookPen } from 'lucide-vue-next';
 
 
   definePageMeta({
@@ -107,13 +135,37 @@
 
   const listObj = ref({
     userId : authStore.authInfo.id,
+    judgmentTypeId : '',
+    judmentUnitUyapId : '',
     page : 1,
-    pageSize : 18,
+    pageSize : 15,
   })  
   
   const cases = ref<CaseItem[]>([])
+  const judgmentTypes = ref<any[]>([])
+  const selectedJudgmentType = ref('0')
+  const selectedJudgmentUnit = ref('')
+  const judgmentUnits = ref<any[]>([])
+
+  const getJudgmentTypes = async () => {
+    const response = await apiRequest('get', '/judgment-types/get-all')
+    if(response.data.success){
+      judgmentTypes.value = response.data.data
+    }
+  }
+
+
+  const getJudgmentUnitsByTypeId = async () => {
+    selectedJudgmentUnit.value = ''
+    const response = await apiRequest('get', `/judgment-unit/get-units-by-type-id/${selectedJudgmentType.value}`)
+    if(response.data.success){
+      judgmentUnits.value = response.data.data
+    }
+  }
   
   const getCases = async () => {
+    listObj.value.judgmentTypeId = selectedJudgmentType.value
+    listObj.value.judmentUnitUyapId = selectedJudgmentUnit.value
     const response = await apiRequest('post', '/cases/get-cases-by-user-id', listObj.value)
     if(response.data.success){
       cases.value = response.data.data.data
@@ -139,7 +191,9 @@
     router.push(`/cases/${encodeURIComponent(caseNo)}/case-info`)
   }
   
-  onMounted(() => {
-    getCases()
+  onMounted(async () => {
+    await getJudgmentTypes()
+    await getJudgmentUnitsByTypeId()
+    await getCases()
   })
   </script>
