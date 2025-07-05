@@ -24,15 +24,12 @@
           <h3 class="text-xl font-bold mb-4">İletişim</h3>
           <div class="space-y-4">
             <div class="flex items-center">
-              <i class="fas fa-phone text-blue-400 mr-3 text-xl"></i>
               <p>+90 555 000 00 00</p>
             </div>
             <div class="flex items-center">
-              <i class="fas fa-envelope text-blue-400 mr-3 text-xl"></i>
               <p>info@ivukat.com</p>
             </div>
             <div class="flex items-center">
-              <i class="fas fa-map-marker-alt text-blue-400 mr-3 text-xl"></i>
               <p>İstanbul, Türkiye</p>
             </div>
           </div>
