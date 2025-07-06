@@ -8,66 +8,27 @@
 import "vue-awesome-paginate/dist/style.css";
 import { useAuthStore } from '@/stores/auth'
 
-interface ChromeTabsQueryInfo {
-  active: boolean;
-  currentWindow: boolean;
-}
 
-interface ChromeTab {
-  id: number;
-  url: string;
-  title: string;
-}
-
-interface ChromeTabs {
-  query(info: ChromeTabsQueryInfo, callback: (tabs: ChromeTab[]) => void): void;
-}
-
-interface ChromeRuntime {
-  sendMessage(extensionId: string, message: any, callback: (response: any) => void): void;
-}
-
-interface Chrome {
-  tabs: ChromeTabs;
-  runtime: ChromeRuntime;
-}
-
-declare global {
-  interface Window {
-    chrome?: Chrome;
-  }
-}
 
 const auth = useAuthStore()
 
-// Tarayıcı sekmelerini kontrol etmek için
-const getActiveTab = () => {
-  if (window.chrome?.tabs) {
-    window.chrome.tabs.query({ active: true, currentWindow: true }, (tabs: ChromeTab[]) => {
-      console.log('Aktif sekme URL:', tabs[0]?.url);
-    });
-  }
-}
 
-// Extension'a data göndermek için
-const sendDataToExtension = (data: any, extensionId: string) => {
-  if (window.chrome?.runtime) {
-    window.chrome.runtime.sendMessage(extensionId, { data }, (response: any) => {
-      console.log('Extension yaniti:', response);
-    });
-  }
+const sendDataToExtension = () => {
+  window.postMessage({
+    source : 'ivukat',
+    type: 'FROM_IVUKAT_SEND_DATA',
+    payload : {
+      userId : auth.session?.id,
+    }
+  }, '*')
 }
 
 onMounted(async () => {
   if(auth.session){
     await auth.getSession();
     await auth.setRefreshTokenTime(); 
-    getActiveTab();
+    sendDataToExtension();
   }
-  
-  // Örnek kullanım
-  
-  // sendDataToExtension({ message: "Merhaba" }, "extension-id");
 })
 
 </script>
