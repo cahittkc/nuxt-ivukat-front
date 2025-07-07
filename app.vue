@@ -7,10 +7,13 @@
 <script setup lang="ts">
 import "vue-awesome-paginate/dist/style.css";
 import { useAuthStore } from '@/stores/auth'
-
+import {watch} from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue';
 
 
 const auth = useAuthStore()
+
+const sendDataExtensionTimer = ref<NodeJS.Timeout | null>(null)
 
 
 const sendDataToExtension = () => {
@@ -28,6 +31,26 @@ onMounted(async () => {
     await auth.getSession();
     await auth.setRefreshTokenTime(); 
     sendDataToExtension();
+    sendDataExtensionTimer.value = setInterval(() => {
+      sendDataToExtension();
+    }, 5000);
+  }
+})
+
+watch(() => auth.session, () => {
+  console.log(auth.session);
+  
+  if(auth.session){
+    sendDataToExtension();
+  }
+  else{
+    clearInterval(sendDataExtensionTimer.value!);
+  }
+})
+
+onUnmounted(() => {
+  if(sendDataExtensionTimer.value){
+    clearInterval(sendDataExtensionTimer.value);
   }
 })
 
