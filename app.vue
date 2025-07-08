@@ -110,6 +110,11 @@ onUnmounted(() => {
   color: #fff;
   border-color: #6366f1;
 }
+
+.vuecal__cell--today .vuecal__cell-date {
+    background: rgb(203, 8, 8) !important;
+}
+
 @media (max-width: 640px) {
   .pagination-container {
     gap: 0;

@@ -35,7 +35,7 @@
         </button>
         <div class="flex items-center gap-2 bg-gray-800/80 px-3 py-1 rounded-full shadow border border-gray-700">
           <LucideUser class="w-5 h-5 text-indigo-400" />
-          <span class="text-gray-200 text-sm font-semibold">{{ auth?.session?.firstName }} {{ auth.session?.lastName }}</span>
+          <span class="text-gray-200 text-sm font-semibold">{{ auth?.session?.firstName }} {{ auth?.session?.middleName }} {{ auth.session?.lastName }}</span>
         </div>
         <button
           @click="auth.logout"
@@ -99,7 +99,11 @@ const searchHandler = () => {
   searchTimeout = setTimeout(async () => {
     try {
       let replaceText = search.value.replace(/\s/g, "")
-      const result = await apiRequest('post', '/cases/search-case', { searchText: replaceText.toLowerCase() })
+      let data = {
+        searchText: replaceText.toLowerCase(),
+        userId: auth?.session?.id
+      }
+      const result = await apiRequest('post', '/cases/search-case', data)
       cases.value = result.data.data
       searchModalVisible.value = true
     } catch (error) {

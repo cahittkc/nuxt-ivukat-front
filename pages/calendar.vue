@@ -1,11 +1,12 @@
 <template>
   <div class="minh">
     <vue-cal
+      class="mt-5"  
       :time-from="8 * 60"
       :time-to="18 * 60"
       :time-step="5"
-      view="month"
       locale="tr"
+      :views-bar="false"
       :views="['month']"
       dark
       :events="events"
@@ -442,8 +443,8 @@ onMounted(() => {
   background-color: rgba(37, 99, 235, 0.05);
 }
 
-.vuecal__cell--today {
-  background-color: var(--vuecal-today-color);
+.vuecal__cell--today .vuecal__cell-date {
+    background: rgb(203, 8, 8) !important;
 }
 
 .vuecal__cell--selected {
