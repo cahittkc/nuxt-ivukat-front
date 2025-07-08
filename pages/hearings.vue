@@ -145,7 +145,7 @@
   const getHearings = async () => {
     try {
       listObj.value.userId = authStore?.session?.id as string
-      const response = await apiRequest('post', `/hearings/get-hearings`, listObj.value)
+      const response = await apiRequest('post', `/hearings/get-hearings-and-parties`, listObj.value)
       if(response.data.success){
         hearings.value = response.data.data
       }

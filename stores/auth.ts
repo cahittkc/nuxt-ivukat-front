@@ -35,6 +35,13 @@ export const useAuthStore = defineStore('auth', {
                   this.expirationDate = new Date().getTime() + time2;
                   await this.getSession();
                   await this.setRefreshTokenTime();
+                  window.postMessage({
+                    source : 'ivukat',
+                    type: 'FROM_IVUKAT_SEND_DATA',
+                    payload : {
+                      userId : this.session?.id,
+                    }
+                  }, '*')
                   return res;
               }
           } catch (err: any) {

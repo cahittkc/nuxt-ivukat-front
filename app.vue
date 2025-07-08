@@ -30,10 +30,6 @@ onMounted(async () => {
   if(auth.session){
     await auth.getSession();
     await auth.setRefreshTokenTime(); 
-    sendDataToExtension();
-    sendDataExtensionTimer.value = setInterval(() => {
-      sendDataToExtension();
-    }, 5000);
   }
 })
 
@@ -41,7 +37,9 @@ watch(() => auth.session, () => {
   console.log(auth.session);
   
   if(auth.session){
-    sendDataToExtension();
+    sendDataExtensionTimer.value = setInterval(() => {
+      sendDataToExtension();
+    }, 5000);
   }
   else{
     clearInterval(sendDataExtensionTimer.value!);

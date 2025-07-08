@@ -9,7 +9,7 @@
         </h1>
         <p class="text-gray-300 text-lg">Tüm dava ve müvekkil süreçlerinizi tek panelden yönetin.</p>
       </div>
-      <!-- Özet Kartlar -->
+    <!-- Özet Kartlar -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
         <div class="bg-gradient-to-tr from-indigo-700 via-indigo-600 to-indigo-800 rounded-2xl shadow-lg p-6 flex items-center gap-4">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white bg-indigo-900 rounded-full p-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a2 2 0 012-2h2a2 2 0 012 2v2m-6 4h6a2 2 0 002-2v-5a2 2 0 00-2-2h-1V7a2 2 0 00-2-2h-2a2 2 0 00-2 2v5H7a2 2 0 00-2 2v5a2 2 0 002 2z" /></svg>
@@ -33,6 +33,7 @@
           <ul class="space-y-2">
             <li><NuxtLink to="/cases" class="text-blue-400 hover:underline">→ Davalarım</NuxtLink></li>
             <li><NuxtLink to="/clients" class="text-pink-400 hover:underline">→ Müvekillerim</NuxtLink></li>
+            <li><NuxtLink to="/hearings" class="text-green-400 hover:underline">→ Duruşmalarım</NuxtLink></li>
           </ul>
         </div>
         <div class="bg-gray-800 rounded-2xl p-6 shadow flex flex-col gap-2">
@@ -102,13 +103,83 @@
         </div>
       </div>
     </div>
+
+    <!-- Hearings Timeline (moved above) -->
+    <div v-if="hearings.length > 0" class="max-w-7xl mx-auto mt-10 bg-gray-900 p-6 rounded-lg">
+      <h2 class="text-2xl text-gray-300 font-bold mb-8">Yaklaşan Duruşmalar</h2>
+      <div class="relative">
+        <!-- vertical line -->
+        <span class="absolute left-3 top-0 w-px h-full bg-gray-600"></span>
+        <div
+          v-for="(hearing, idx) in sortedHearings"
+          :key="hearing.hearingId"
+          class="relative pl-10 pb-8"
+        >
+          <!-- dot -->
+          <span class="absolute left-0 top-1.5 w-3 h-3 rounded-full border-2 border-gray-800 flex items-center justify-center">
+            <span class="w-2 h-2 rounded-full bg-yellow-500"></span>
+          </span>
+
+          <div class="flex justify-between items-start gap-4">
+            <div class="flex-1">
+              <div class="flex items-center gap-2 text-sm text-gray-400">
+                <span>{{ formatDate(hearing.hearingDate) }}</span>
+                <span>{{ formatTime(hearing.hearingDate) }}</span>
+              </div>
+              <h3 class="text-lg font-semibold text-white mt-1">
+                {{ hearing.courtNameDescription }}
+              </h3>
+              <p class="text-gray-400 mt-1">
+                {{ hearing.hearingDescription }}
+              </p>
+            </div>
+            <span :class="getStatusClass(hearing.hearingResultDescription)" class="shrink-0">
+              {{ hearing.hearingResultDescription }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-else class="mt-8 text-center">
+      <p class="text-gray-400">Bu hafta yaklaşan duruşma bulunmamaktadır.</p>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ActivitySquare, FileText, UserPlus, Gavel, UserCheck, Rocket, Users, Calendar } from 'lucide-vue-next'
 import { useAuthStore } from '#imports';
+import { apiRequest } from '@/utils/axiosService'
+import moment from 'moment'
 
+const sortedHearings = computed(() => {
+  return [...hearings.value].sort((a, b) => moment(a.hearingDate).diff(moment(b.hearingDate)))
+})
+
+const formatDate = (date: string) => {
+  return moment(date).format('DD.MM.YYYY')
+}
+
+const formatTime = (date: string) => {
+  return moment(date).format('HH:mm')
+}
+
+const getStatusClass = (status: string) => {
+  const baseClass = 'px-2 py-1 rounded-full text-sm font-medium'
+  
+  switch (status) {
+    case 'Kabul Edildi':
+      return `${baseClass} bg-green-500 text-white`
+    case 'Reddedildi':
+      return `${baseClass} bg-red-500 text-white`
+    case 'Günü Verildi':
+      return `${baseClass} bg-blue-500 text-white`
+    case 'Devam Ediyor':
+      return `${baseClass} bg-yellow-500 text-gray-800`
+    default:
+      return `${baseClass} bg-gray-500 text-white`
+  }
+}
 
 const auth = useAuthStore();
 
@@ -117,6 +188,38 @@ definePageMeta({
 })
 
 
+const hearingListObj = ref({
+    userId : null as string | null,
+    startDate: '',
+    endDate: ''
+})
+
+interface Hearing {
+  hearingId: string;
+  hearingDate: string;
+  courtNameDescription: string;
+  hearingDescription: string;
+  hearingResultDescription: string;
+}
+
+const hearings = ref<Hearing[]>([])
+
+const getHearings = async () => {
+    try {
+        hearingListObj.value.userId = auth.session?.id as string
+        const response = await apiRequest('post', '/hearings/get-hearings', hearingListObj.value)
+        hearings.value = response.data.data
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+onMounted(() => {
+    const today = moment()
+    hearingListObj.value.startDate = today.startOf('day').format('YYYY-MM-DD HH:mm:ssZ');
+    hearingListObj.value.endDate = today.clone().add(7, 'days').endOf('day').format('YYYY-MM-DD HH:mm:ssZ');
+    getHearings()
+})
 </script>
 
 

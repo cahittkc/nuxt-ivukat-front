@@ -2,6 +2,7 @@
   <div class="minh">
     <vue-cal
       class="mt-5"  
+      @view-change="getCalendar($event)"
       :time-from="8 * 60"
       :time-to="18 * 60"
       :time-step="5"
@@ -98,9 +99,6 @@ import { apiRequest } from '@/utils/axiosService'
 const authStore = useAuthStore()
 const hearings = ref()
 
-
-
-
 const events = computed(() => {
   if (!hearings.value) return []
   return hearings.value.map((hearing: any) => ({
@@ -143,6 +141,14 @@ const closeModal = () => {
   }
 }
 
+
+const getCalendar = (event :any) => {
+    listObj.value.startDate = moment(event.start).format('YYYY-MM-DD HH:mm:ssZ')
+    listObj.value.endDate = moment(event.end).format('YYYY-MM-DD HH:mm:ssZ')
+    getHearings()
+}
+
+
 const saveEvent = async () => {
   try {
     const completeDate = `${newEvent.value.hearingDate} ${newEvent.value.hearingDate.split('T')[1]}`
@@ -161,7 +167,9 @@ const saveEvent = async () => {
 }
 
 const listObj = ref({
-    userId: null as string | null
+    userId: null as string | null,
+    startDate : null as string | null,
+    endDate : null as string | null
 })
 
 const getHearings = async () => {
@@ -205,6 +213,9 @@ const showEventDetails = (event: any) => {
 }
 
 onMounted(() => {
+    const currentMonth = moment()
+    listObj.value.startDate = currentMonth.startOf('month').format('YYYY-MM-DD HH:mm:ssZ')
+    listObj.value.endDate = currentMonth.endOf('month').format('YYYY-MM-DD HH:mm:ssZ')
     getHearings()
 })
 
