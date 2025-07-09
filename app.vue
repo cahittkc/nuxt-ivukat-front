@@ -34,8 +34,6 @@ onMounted(async () => {
 })
 
 watch(() => auth.session, () => {
-  console.log(auth.session);
-  
   if(auth.session){
     sendDataExtensionTimer.value = setInterval(() => {
       sendDataToExtension();
@@ -45,6 +43,28 @@ watch(() => auth.session, () => {
     clearInterval(sendDataExtensionTimer.value!);
   }
 })
+
+const normalizeTR = (str: string): string => {
+  
+    const normalizedStr = str
+        .toLocaleLowerCase('tr-TR')
+        .normalize('NFKD')
+        .replace(/\s/g, '')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/ı/g, 'i')
+        .replace(/ş/g, 's')
+        .replace(/ğ/g, 'g')
+        .replace(/ö/g, 'o')
+        .replace(/ç/g, 'c')
+        .replace(/ü/g, 'u')
+        .replace(/Ü/g, 'u');
+
+        console.log(normalizedStr);
+        
+        return normalizedStr;
+}
+
+normalizeTR('İzmir 22. Asliye Ceza Mahkemesi 2026/106')
 
 onUnmounted(() => {
   if(sendDataExtensionTimer.value){

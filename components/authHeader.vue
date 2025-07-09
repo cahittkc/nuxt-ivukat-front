@@ -88,7 +88,7 @@ const searchHandler = () => {
   }
 
   // Eğer arama değeri 4 karakterden azsa veya boşsa, timeout'u temizle ve döndür
-  if (search.value.length < 4 || !search.value.trim()) {
+  if (search.value.length < 3 || !search.value.trim()) {
     if (searchTimeout) {
       clearTimeout(searchTimeout)
       searchTimeout = null
