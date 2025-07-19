@@ -37,41 +37,33 @@
     <div v-if="showModal" class="modal-overlay">
       <div class="modal">
         <div class="modal-header">
-          <h3>Yeni Duruşma Ekle</h3>
+          <h3>Yeni Takvim Ekle</h3>
           <button @click="closeModal" class="close-button">&times;</button>
         </div>
         <div class="modal-body">
           <form @submit.prevent="saveEvent">
             <div class="form-group">
-              <label>Mahkeme</label>
-              <input v-model="newEvent.courtNameDescription" type="text" required>
-            </div>
-            <div class="form-group">
-              <label>Dosya No</label>
-              <input v-model="newEvent.esasNo" type="text" required>
-            </div>
-            <div class="form-group">
-              <label>Duruşma Türü</label>
-              <select v-model="newEvent.hearingDescription" required>
+              <label>Görüşme Türü</label>
+              <select v-model="newEvent.type" required>
                 <option value="">Seçiniz</option>
-                <option value="Duruşma">Duruşma</option>
-                <option value="Görüşme">Görüşme</option>
-                <option value="Kabul">Kabul</option>
+                <option value="meeting">Görüşme</option>
+                <option value="hearing">Duruşma</option>
+                <option value="settlement">Uzlaşma</option>
+                <option value="other">Diğer</option>
               </select>
             </div>
+            <div class="form-group">
+              <label>Title</label>
+              <input v-model="newEvent.title" type="text" required>
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <input v-model="newEvent.description" type="text" required>
+            </div>
+            
             <div class="form-group">
               <label>Saat</label>
-              <input v-model="newEvent.hearingDate" type="time" required>
-            </div>
-            <div class="form-group">
-              <label>Duruşma Sonucu</label>
-              <select v-model="newEvent.hearingResultDescription" required>
-                <option value="">Seçiniz</option>
-                <option value="Kabul Edildi">Kabul Edildi</option>
-                <option value="Reddedildi">Reddedildi</option>
-                <option value="Günü Verildi">Günü Verildi</option>
-                <option value="Devam Ediyor">Devam Ediyor</option>
-              </select>
+              <input v-model="selectedTime" type="time" required>
             </div>
             <div class="form-actions">
               <button type="submit" class="save-button">Kaydet</button>
@@ -112,31 +104,36 @@ const events = computed(() => {
   }))
 })
 
+const listObj = ref({
+    userId: null as string | null,
+    startDate : null as string | null,
+    endDate : null as string | null
+})
+
 const showModal = ref(false)
 const selectedDate = ref('')
+const selectedTime = ref('')
 const newEvent = ref({
-  courtNameDescription: '',
-  esasNo: '',
-  hearingDescription: '',
-  hearingDate: '',
-  hearingResultDescription: '',
+  title: '',
+  description: '',
+  date : '',
+  type : '',
   userId: authStore?.session?.id
 })
 
-const openEventModal = (cell) => {
-  selectedDate.value = cell.date
-  newEvent.value.hearingDate = moment(cell.date).format('YYYY-MM-DD')
+const openEventModal = (cell : any) => {
+  selectedDate.value = cell.cursor.date
+  console.log(cell.cursor.date);
   showModal.value = true
 }
 
 const closeModal = () => {
   showModal.value = false
   newEvent.value = {
-    courtNameDescription: '',
-    esasNo: '',
-    hearingDescription: '',
-    hearingDate: '',
-    hearingResultDescription: '',
+    title: '',
+    description: '',
+    date : '',
+    type : '',
     userId: authStore?.session?.id
   }
 }
@@ -150,27 +147,27 @@ const getCalendar = (event :any) => {
 
 
 const saveEvent = async () => {
-  try {
-    const completeDate = `${newEvent.value.hearingDate} ${newEvent.value.hearingDate.split('T')[1]}`
-    const response = await apiRequest('post', '/hearings/create-hearing', {
-      ...newEvent.value,
-      hearingDate: completeDate
-    })
+  console.log(selectedDate.value);  // Original date (e.g., Fri Jul 18 2025 09:30:00 GMT+0300)
+  console.log(selectedTime.value);  // Time string (e.g., "12:00")
+  
+  const [hours, minutes] = selectedTime.value.split(':').map(Number);
+  
+  const updatedDate = new Date(selectedDate.value);
+  updatedDate.setHours(hours, minutes, 0, 0);
+  
+  newEvent.value.date = moment(updatedDate).format('YYYY-MM-DD HH:mm:ssZ')
 
-    if (response.data.success) {
-      await getHearings()
-      closeModal()
+  try {
+    const response = await apiRequest('post', '/calendar/add-calendar', newEvent.value)
+    if(response.data.success){
+      closeModal();
     }
   } catch (error) {
-    console.error('Error creating hearing:', error)
+    console.log(error);
   }
 }
 
-const listObj = ref({
-    userId: null as string | null,
-    startDate : null as string | null,
-    endDate : null as string | null
-})
+
 
 const getHearings = async () => {
     try {

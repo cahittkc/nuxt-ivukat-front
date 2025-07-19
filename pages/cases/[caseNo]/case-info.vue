@@ -5,7 +5,7 @@
         <span class="inline-block bg-blue-700 rounded-full p-2">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a2 2 0 012-2h2a2 2 0 012 2v2m-6 4h6a2 2 0 002-2v-5a2 2 0 00-2-2h-1V7a2 2 0 00-2-2h-2a2 2 0 00-2 2v5H7a2 2 0 00-2 2v5a2 2 0 002 2z" /></svg>
         </span>
-        Dava Detayı
+        Dava Detayı ({{ caseMain?.court }} - {{ caseMain?.esasNo }})
       </h1>
       <div v-if="loading" class="text-gray-300">Yükleniyor...</div>
       <div v-else-if="!caseDetail" class="text-red-400">
@@ -56,12 +56,12 @@
               <tr><th class="px-4 py-3 text-left text-sm font-semibold text-gray-200">Takibin Türü</th><td class="px-4 py-3 text-gray-200">{{ caseDetail.takibinTuruAciklama || '-' }}</td></tr>
               <tr><th class="px-4 py-3 text-left text-sm font-semibold text-gray-200">Takibin Şekli</th><td class="px-4 py-3 text-gray-200">{{ caseDetail.takibinSekliAciklama || '-' }}</td></tr>
               <tr><th class="px-4 py-3 text-left text-sm font-semibold text-gray-200">Takibin Yolu</th><td class="px-4 py-3 text-gray-200">{{ caseDetail.takibinYoluAciklama || '-' }}</td></tr>
-              <tr><th class="px-4 py-3 text-left text-sm font-semibold text-gray-200">Alacak Toplamı</th><td class="px-4 py-3 text-blue-300">{{ caseDetail.alacakKalemToplamTutar ?? '-' }} ₺</td></tr>
-              <tr><th class="px-4 py-3 text-left text-sm font-semibold text-gray-200">Faiz Tutarı</th><td class="px-4 py-3 text-blue-300">{{ caseDetail.alacakKalemFaizTutar ?? '-' }} ₺</td></tr>
-              <tr><th class="px-4 py-3 text-left text-sm font-semibold text-gray-200">Takip Sonrası Masraf</th><td class="px-4 py-3 text-blue-300">{{ caseDetail.takipSonrasiMasraf ?? '-' }} ₺</td></tr>
-              <tr><th class="px-4 py-3 text-left text-sm font-semibold text-gray-200">Vekalet Ücreti</th><td class="px-4 py-3 text-blue-300">{{ caseDetail.vekaletUcreti ?? '-' }} ₺</td></tr>
-              <tr><th class="px-4 py-3 text-left text-sm font-semibold text-gray-200">Tahsil Harcı</th><td class="px-4 py-3 text-blue-300">{{ caseDetail.tahsilHarci ?? '-' }} ₺</td></tr>
-              <tr><th class="px-4 py-3 text-left text-sm font-semibold text-gray-200">Yapılmış Borç Tahsilatı</th><td class="px-4 py-3 text-blue-300">{{ caseDetail.yapilmisBorcTahsilati ?? '-' }} ₺</td></tr>
+              <tr><th class="px-4 py-3 text-left text-sm font-semibold text-gray-200">Alacak Toplamı</th><td class="px-4 py-3 text-blue-300">{{ formatCurrency(caseDetail.alacakKalemToplamTutar) }}</td></tr>
+              <tr><th class="px-4 py-3 text-left text-sm font-semibold text-gray-200">Faiz Tutarı</th><td class="px-4 py-3 text-blue-300">{{ formatCurrency(caseDetail.alacakKalemFaizTutar) }}</td></tr>
+              <tr><th class="px-4 py-3 text-left text-sm font-semibold text-gray-200">Takip Sonrası Masraf</th><td class="px-4 py-3 text-blue-300">{{ formatCurrency(caseDetail.takipSonrasiMasraf) }}</td></tr>
+              <tr><th class="px-4 py-3 text-left text-sm font-semibold text-gray-200">Vekalet Ücreti</th><td class="px-4 py-3 text-blue-300">{{ formatCurrency(caseDetail.vekaletUcreti) }}</td></tr>
+              <tr><th class="px-4 py-3 text-left text-sm font-semibold text-gray-200">Tahsil Harcı</th><td class="px-4 py-3 text-blue-300">{{ formatCurrency(caseDetail.tahsilHarci) }}</td></tr>
+              <tr><th class="px-4 py-3 text-left text-sm font-semibold text-gray-200">Yapılmış Borç Tahsilatı</th><td class="px-4 py-3 text-blue-300">{{ formatCurrency(caseDetail.yapilmisBorcTahsilati) }}</td></tr>
             </tbody>
           </table>
         </div>
@@ -77,6 +77,7 @@
 import { useRoute } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import { apiRequest } from '@/utils/axiosService'
+import { formatCurrency } from '@/utils/formatCurrency'
 
 definePageMeta({
   layout: 'auth'
@@ -84,6 +85,7 @@ definePageMeta({
 
 const route = useRoute()
 const caseNo = decodeURIComponent(route.params.caseNo as string)
+const caseMain = ref<any>(null)
 const caseDetail = ref<any>(null)
 const loading = ref(true)
 
@@ -92,7 +94,8 @@ const getCaseDetail = async () => {
   try {
     const response = await apiRequest('post', '/cases/get-case-info', { caseNo : caseNo })
     if(response.data.success){
-      caseDetail.value = response.data.data
+      caseMain.value = response.data.data
+      caseDetail.value = response.data.data.details
     }
   } catch (e) {
     caseDetail.value = null
