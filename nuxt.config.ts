@@ -4,6 +4,7 @@ export default defineNuxtConfig({
     port : 8080
   },
   devtools: { enabled: false },
+  components: true,
   modules: [
     '@pinia/nuxt',
     '@nuxtjs/tailwindcss',
