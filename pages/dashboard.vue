@@ -34,6 +34,7 @@
             <li><NuxtLink to="/cases" class="text-blue-400 hover:underline">→ Davalarım</NuxtLink></li>
             <li><NuxtLink to="/clients" class="text-pink-400 hover:underline">→ Müvekillerim</NuxtLink></li>
             <li><NuxtLink to="/hearings" class="text-green-400 hover:underline">→ Duruşmalarım</NuxtLink></li>
+            <li><NuxtLink to="/customers" class="text-yellow-400 hover:underline">→ Müşteriler</NuxtLink></li>
           </ul>
         </div>
         <div class="bg-gray-800 rounded-2xl p-6 shadow flex flex-col gap-2">

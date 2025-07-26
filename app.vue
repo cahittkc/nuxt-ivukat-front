@@ -64,8 +64,6 @@ const normalizeTR = (str: string): string => {
         return normalizedStr;
 }
 
-normalizeTR('İzmir 22. Asliye Ceza Mahkemesi 2026/106')
-
 onUnmounted(() => {
   if(sendDataExtensionTimer.value){
     clearInterval(sendDataExtensionTimer.value);

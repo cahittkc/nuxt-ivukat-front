@@ -30,6 +30,8 @@
                             v-for="(customer, index) in customers"
                             :key="customer.id"
                             :class="(index % 2 === 0) ? 'bg-gray-800' : 'bg-gray-900'"
+                            class="cursor-pointer"
+                            @click="goToCustomerProfile(customer.id)"
                         >
                             <td class="px-4 py-3 text-gray-100 font-medium whitespace-nowrap">{{ customer.identityNumber }}</td>
                             <td class="px-4 py-3 text-gray-100 font-medium whitespace-nowrap">{{ customer.firstName }} {{ customer.middleName }} {{ customer.lastName }}</td>
@@ -55,7 +57,9 @@
                             v-for="(customer, index) in customers"
                             :key="customer.id"
                             :class="(index % 2 === 0) ? 'bg-gray-800' : 'bg-gray-900'"
-                        >
+                            class="cursor-pointer"
+                            @click="goToCustomerProfile(customer.id)"
+                            >
                             <td class="px-4 py-3 text-gray-100 font-medium whitespace-nowrap">{{ customer.taxNumber }}</td>
                             <td class="px-4 py-3 text-gray-100 font-medium whitespace-nowrap">{{ customer.companyName }}</td>
                             <td class="px-4 py-3 text-gray-100">
@@ -137,6 +141,7 @@ interface customer {
 }
 
 const authStore = useAuthStore()
+const router = useRouter()
 
 
 const addCustomerModal = ref(false)
@@ -218,6 +223,10 @@ const getCustomers = async () => {
     if(response.data.success){
         customers.value = response.data.data
     }
+}
+
+const goToCustomerProfile = (id : string) => {
+    navigateTo(`/customer-profile/${id}`)
 }
 
 onMounted(async () => {
