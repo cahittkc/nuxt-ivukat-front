@@ -7,7 +7,7 @@
             <div class="flex items-center justify-between">
               <h2 class="text-2xl font-bold text-indigo-300">Müvekkil Profili</h2>
               <span class="px-3 py-1 text-sm font-medium rounded-full bg-indigo-900 text-indigo-200">
-                ID: {{ route.params.customerId }}
+                ID: {{ route?.params?.customerId }}
               </span>
             </div>
           </div>
@@ -22,8 +22,7 @@
                   </span>
                 </div>
                 <div>
-                  <h1 class="text-2xl font-bold text-white">{{ customer.firstName ? customer.firstName + ' ' + customer.middleName + ' ' + customer.lastName : customer.companyName }}</h1>
-                  <p class="text-gray-400">{{ customer.email || 'E-posta yok' }}</p>
+                  <h1 class="text-2xl font-bold text-white">{{ customer.firstName  }} {{ customer.middleName }} {{ customer.lastName }} {{ customer.companyName }}</h1>
                 </div>
               </div>
               <div class="mt-4 md:mt-0">
@@ -67,33 +66,6 @@
           <!-- Tab Content -->
           <div class="p-6">
             <NuxtPage />
-            
-            <!-- Overview Content (shown when no child route) -->
-            <div v-if="$route.path === `/customer-profile/${route.params.customerId}`" class="space-y-6">
-              <div v-if="customer">
-                <h3 class="text-lg font-medium text-indigo-300 mb-4">İletişim Bilgileri</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h4 class="text-sm font-medium text-gray-400">Telefon</h4>
-                    <p class="mt-1 text-sm text-white">{{ customer.phone || 'Belirtilmemiş' }}</p>
-                  </div>
-                  <div>
-                    <h4 class="text-sm font-medium text-gray-400">E-posta</h4>
-                    <p class="mt-1 text-sm text-white">{{ customer.email || 'Belirtilmemiş' }}</p>
-                  </div>
-                  <div class="md:col-span-2">
-                    <h4 class="text-sm font-medium text-gray-400">Adres</h4>
-                    <p class="mt-1 text-sm text-gray-300">{{ customer.address || 'Belirtilmemiş' }}</p>
-                  </div>
-                </div>
-              </div>
-  
-              <div v-else class="flex justify-center py-12">
-                <div class="animate-pulse text-gray-400">
-                  Müşteri bilgileri yükleniyor...
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -101,16 +73,32 @@
   </template>
   
   <script setup lang="ts">
-  import { ref, onMounted } from 'vue';
+  import { ref } from 'vue';
   import { useRoute } from 'vue-router';
   
   definePageMeta({
-      layout: 'auth'
-  })
+    layout: 'auth',
+    key: (route) => route.fullPath
+  });
+
+  interface customer {
+    id: string;
+    firstName: string;
+    middleName: string;
+    lastName: string;
+    companyName: string;
+  }
   
   const route = useRoute();
-  const customer = ref<any>(null);
-  
+  const customer = ref<customer>({
+    id: '',
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    companyName: '',
+  })
+
+
   const getCustomer = async () => {
     try {
       const response = await apiRequest('get', `/customers/get-customer/${route.params.customerId}`);
@@ -121,8 +109,8 @@
       console.error('Müşteri bilgileri yüklenirken hata oluştu:', error);
     }
   };
-  
-  onMounted(() => {
-    getCustomer();
-  });
-  </script>
+
+onMounted(() => {
+    getCustomer()
+})  
+</script>

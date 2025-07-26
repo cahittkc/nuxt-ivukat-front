@@ -120,20 +120,22 @@ import { Eye } from 'lucide-vue-next';
 import moment from 'moment';
 
 
-    definePageMeta({
-        layout: 'auth'
-    })
+definePageMeta({
+    layout: 'auth'
+})
 
-    const route = useRoute();
-    const addCasesModal = ref(false)
-    const customerCases = ref<any[]>([])
-    const cases = ref<any[]>([])
-    const search = ref('')
-    const searchInput = ref(null)
-    const auth = useAuthStore()
-    const selectedCaseForAdd = ref<any[]>([])
 
-    let searchTimeout: NodeJS.Timeout | null = null
+
+const route = useRoute();
+const addCasesModal = ref(false)
+const customerCases = ref<any[]>([])
+const cases = ref<any[]>([])
+const search = ref('')
+const searchInput = ref(null)
+const auth = useAuthStore()
+const selectedCaseForAdd = ref<any[]>([])
+
+let searchTimeout: NodeJS.Timeout | null = null
 
     const searchHandler = () => {
   if (searchTimeout) {
