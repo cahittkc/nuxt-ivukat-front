@@ -226,7 +226,7 @@ const getCustomers = async () => {
 }
 
 const goToCustomerProfile = (id : string) => {
-    navigateTo(`/customer-profile/${id}`)
+    router.push(`/customer-profile/${id}`)
 }
 
 onMounted(async () => {

@@ -1,5 +1,5 @@
 <template>
-    <div class="min-h-screen bg-gradient-to-b from-gray-900 to-black py-10 px-4">
+    <div v-if="customerId" class="min-h-screen bg-gradient-to-b from-gray-900 to-black py-10 px-4">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
         <div class="bg-gray-800 rounded-2xl shadow-lg overflow-hidden mb-8">
@@ -7,7 +7,7 @@
             <div class="flex items-center justify-between">
               <h2 class="text-2xl font-bold text-indigo-300">Müvekkil Profili</h2>
               <span class="px-3 py-1 text-sm font-medium rounded-full bg-indigo-900 text-indigo-200">
-                ID: {{ route?.params?.customerId }}
+                ID: {{ route.params.customerId }}
               </span>
             </div>
           </div>
@@ -22,7 +22,9 @@
                   </span>
                 </div>
                 <div>
-                  <h1 class="text-2xl font-bold text-white">{{ customer.firstName  }} {{ customer.middleName }} {{ customer.lastName }} {{ customer.companyName }}</h1>
+                  <h1 class="text-2xl font-bold text-white">
+                    {{ customer.firstName }} {{ customer.middleName }} {{ customer.lastName }} {{ customer.companyName }}
+                  </h1>
                 </div>
               </div>
               <div class="mt-4 md:mt-0">
@@ -47,16 +49,16 @@
                 Genel Bakış
               </NuxtLink>
               <NuxtLink 
-                :to="`/customer-profile/${route.params.customerId}/cases`"
+                :to="`/customer-profile/${route.params.customerId}/customer-cases`"
                 class="px-1 py-4 text-sm font-medium hover:border-b-2 hover:border-indigo-500 hover:text-indigo-300 text-gray-400"
-                :class="{'border-indigo-500 text-white border-b-2': $route.path.includes('cases')}"
+                :class="{'border-indigo-500 text-white border-b-2': $route.path.includes('customer-cases')}"
               >
                 Davalar
               </NuxtLink>
               <NuxtLink 
-                :to="`/customer-profile/${route.params.customerId}/files`"
+                :to="`/customer-profile/${route.params.customerId}/customer-files`"
                 class="px-1 py-4 text-sm font-medium hover:border-b-2 hover:border-indigo-500 hover:text-indigo-300 text-gray-400"
-                :class="{'border-indigo-500 text-white border-b-2': $route.path.includes('files')}"
+                :class="{'border-indigo-500 text-white border-b-2': $route.path.includes('customer-files')}"
               >
                 Dosyalar
               </NuxtLink>
@@ -70,17 +72,26 @@
         </div>
       </div>
     </div>
+  
+    <div v-else>
+      <div class="flex items-center justify-center h-screen">
+        <div class="text-white text-2xl font-bold">Müşteri bulunamadı</div>
+      </div>
+    </div>
   </template>
   
   <script setup lang="ts">
-  import { ref } from 'vue';
   import { useRoute } from 'vue-router';
   
   definePageMeta({
-    layout: 'auth',
-    key: (route) => route.fullPath
-  });
-
+    layout: 'auth', // bu bir layout dosyası olduğu için layout override etmiyoruz
+  })
+  
+  const route = useRoute();
+  
+  
+  
+  
   interface customer {
     id: string;
     firstName: string;
@@ -89,19 +100,17 @@
     companyName: string;
   }
   
-  const route = useRoute();
-  const customer = ref<customer>({
-    id: '',
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    companyName: '',
+  
+  const customer = ref<customer | null>(null);
+  
+  const customerId = computed(() => {
+    const id = route.params.customerId
+    return Array.isArray(id) ? id[0] : id
   })
-
-
+  
   const getCustomer = async () => {
     try {
-      const response = await apiRequest('get', `/customers/get-customer/${route.params.customerId}`);
+      const response = await apiRequest('get', `/customers/get-customer/${customerId.value}`);
       if (response.data.success) {
         customer.value = response.data.data;
       }
@@ -109,8 +118,12 @@
       console.error('Müşteri bilgileri yüklenirken hata oluştu:', error);
     }
   };
-
-onMounted(() => {
+  
+  // Fetch customer data when the component is mounted
+  watch(customerId, () => {
     getCustomer()
-})  
-</script>
+  }, { immediate: true })
+  
+  
+  </script>
+  

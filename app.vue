@@ -131,6 +131,14 @@ onUnmounted(() => {
     background: rgb(203, 8, 8) !important;
 }
 
+.filepond--drop-label{
+  background-color: #000 !important;
+}
+
+.filepond--drop-label label{
+  color: #fff !important;
+}
+
 @media (max-width: 640px) {
   .pagination-container {
     gap: 0;

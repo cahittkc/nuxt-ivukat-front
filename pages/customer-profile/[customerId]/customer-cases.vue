@@ -118,12 +118,12 @@
 <script setup lang="ts">
 import { Eye } from 'lucide-vue-next';
 import moment from 'moment';
-
+import { ref } from 'vue';
+import { useRoute } from 'vue-router';
 
 definePageMeta({
-    layout: 'auth'
+    layout: 'auth',
 })
-
 
 
 const route = useRoute();
