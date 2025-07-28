@@ -139,6 +139,7 @@ onUnmounted(() => {
   color: #fff !important;
 }
 
+
 @media (max-width: 640px) {
   .pagination-container {
     gap: 0;
